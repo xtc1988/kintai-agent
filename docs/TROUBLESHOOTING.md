@@ -28,7 +28,38 @@
 **予防策:** [再発を防ぐ方法]
 -->
 
-現在、記録されたビルドの問題はありません。
+### pyproject.toml の build-backend エラー (Cannot import 'setuptools.backends._legacy')
+
+**症状:**
+```
+pip._vendor.pyproject_hooks._impl.BackendUnavailable: Cannot import 'setuptools.backends._legacy'
+```
+**原因:** `setuptools.backends._legacy:_Backend` は存在しないモジュール。正しいビルドバックエンドは `setuptools.build_meta`。
+**解決方法:**
+```toml
+# pyproject.toml の [build-system] セクションを以下に修正
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+```
+**予防策:** pyproject.toml作成時はbuild-backendに `setuptools.build_meta` を使うこと。
+
+---
+
+### setuptools flat-layout で複数パッケージ検出エラー
+
+**症状:**
+```
+error: Multiple top-level packages discovered in a flat-layout: ['graph', 'services', 'schedulers'].
+```
+**原因:** setuptoolsの自動パッケージディスカバリがflat-layoutで複数トップレベルパッケージを拒否する。
+**解決方法:**
+```toml
+# pyproject.toml に明示的パッケージディスカバリ設定を追加
+[tool.setuptools.packages.find]
+include = ["graph*", "services*", "schedulers*"]
+```
+**予防策:** 複数トップレベルパッケージがある場合は必ず `[tool.setuptools.packages.find]` で明示的にincludeを指定する。
 
 ---
 

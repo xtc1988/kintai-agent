@@ -11,7 +11,17 @@
 **A:** 回答内容
 -->
 
-現在、一般カテゴリの質問はありません。
+### Q: プロジェクトをローカルで実行するには？
+**A:** 以下の手順で実行できます:
+```bash
+cd attendance-agent
+pip install -e ".[dev]"
+cp .env.example .env  # 編集して認証情報を設定
+python main.py
+```
+
+### Q: 環境変数はどこで設定する？
+**A:** `attendance-agent/.env` ファイルに記載。`.env.example` をコピーして編集。Gitには含まれません。
 
 ---
 
@@ -25,7 +35,18 @@
 ```
 -->
 
-現在、開発カテゴリの質問はありません。
+### Q: 設定を変更するには？
+**A:** `attendance-agent/config.yaml` を編集。チェック間隔、時刻ルール、ブラウザセレクタなどを変更可能。
+
+### Q: 社内システムのセレクタを設定するには？
+**A:** `config.yaml` の `browser.selectors` セクションを編集:
+```yaml
+browser:
+  selectors:
+    login_url: "https://your-system.com/login"
+    username_field: "#your-username-field"
+    clock_in_button: "#your-clock-in-btn"
+```
 
 ---
 
@@ -39,7 +60,19 @@
 ```
 -->
 
-現在、テストカテゴリの質問はありません。
+### Q: テストを実行するには？
+**A:**
+```bash
+cd attendance-agent
+python -m pytest tests/ -v
+```
+
+### Q: 特定のテストだけ実行するには？
+**A:**
+```bash
+python -m pytest tests/test_stamp.py -v          # ファイル単位
+python -m pytest tests/test_stamp.py::test_stamp_clock_in_success -v  # テスト単位
+```
 
 ---
 
