@@ -26,6 +26,9 @@ dev = [
 [tool.setuptools.packages.find]
 include = ["graph*", "services*", "schedulers*"]
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
 [build-system]
 requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
