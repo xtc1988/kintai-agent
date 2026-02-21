@@ -1,0 +1,37 @@
+scheduler:
+  check_interval_minutes: 5
+
+working_state:
+  window_minutes: 15
+  min_event_count: 2
+
+time_rules:
+  clock_out_time: "18:00"
+  cutoff_time: "22:00"
+
+browser:
+  headless: true
+  retry_count: 3
+  session_storage_path: ".session"
+  selectors:
+    login_url: "https://your-system.example.com/login"
+    username_field: "#username"
+    password_field: "#password"
+    login_button: "#login-btn"
+    clock_in_button: "#clock-in"
+    clock_out_button: "#clock-out"
+    success_message: ".success-msg"
+
+slack:
+  enabled: true
+  notify_channel: "DXXXXXXXX"
+  fallback: "console"
+
+calendar:
+  enabled: true
+  fallback: "jpholiday"
+  holiday_calendar_id: "ja.japanese#holiday@group.v.calendar.google.com"
+  vacation_keywords:
+    - "有給"
+    - "年休"
+    - "休暇"
