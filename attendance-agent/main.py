@@ -13,7 +13,6 @@ from services.config_loader import load_config
 from services.pc_monitor import PCMonitor
 from services.google_calendar import GoogleCalendarService, LocalCalendarService
 from services.slack_client import SlackNotifier, ConsoleNotifier
-from services.attendance_browser import AttendanceBrowser
 from graph.nodes.working_state_node import working_state_node
 from graph.nodes.calendar_check_node import calendar_check_node
 from graph.nodes.time_gate_node import time_gate_node
@@ -64,18 +63,26 @@ def create_services(config: dict):
     else:
         notifier = ConsoleNotifier()
 
-    # 打刻ブラウザ
-    browser = AttendanceBrowser(
-        url=os.getenv("ATTENDANCE_URL", ""),
-        user=os.getenv("ATTENDANCE_USER", ""),
-        password=os.getenv("ATTENDANCE_PASS", ""),
-        config=config,
-    )
+    # 打刻サービス
+    browser_config = config["browser"]
+    stamper_type = browser_config.get("stamper", "dummy")
 
-    return monitor, calendar_service, notifier, browser
+    if stamper_type == "playwright":
+        from services.attendance_browser import AttendanceBrowser
+        stamper = AttendanceBrowser(
+            url=os.getenv("ATTENDANCE_URL", ""),
+            user=os.getenv("ATTENDANCE_USER", ""),
+            password=os.getenv("ATTENDANCE_PASS", ""),
+            config=config,
+        )
+    else:
+        from services.dummy_stamper import DummyStamper
+        stamper = DummyStamper()
+
+    return monitor, calendar_service, notifier, stamper
 
 
-def run_check(monitor, calendar_service, notifier, browser, config):
+def run_check(monitor, calendar_service, notifier, stamper, config):
     """1回分のチェックを実行"""
     today_str = date.today().isoformat()
 
@@ -123,7 +130,7 @@ def run_check(monitor, calendar_service, notifier, browser, config):
         return
 
     # 4. Stamp
-    stamp_result = asyncio.run(stamp_node(state, browser=browser))
+    stamp_result = asyncio.run(stamp_node(state, browser=stamper))
     state.update(stamp_result)
 
     # 5. SlackNotify
@@ -142,7 +149,7 @@ def run_check(monitor, calendar_service, notifier, browser, config):
 def main():
     """メイン起動処理"""
     config = load_config("config.yaml")
-    monitor, calendar_service, notifier, browser = create_services(config)
+    monitor, calendar_service, notifier, stamper = create_services(config)
 
     # PC監視開始
     monitor.start()
@@ -153,7 +160,7 @@ def main():
 
     def check_job():
         try:
-            run_check(monitor, calendar_service, notifier, browser, config)
+            run_check(monitor, calendar_service, notifier, stamper, config)
         except Exception as e:
             print(f"[勤怠エージェント] チェック中にエラー: {e}")
             notifier.send_error(str(e))
@@ -167,7 +174,7 @@ def main():
         print("\n[勤怠エージェント] 停止中...")
         scheduler.stop()
         monitor.stop()
-        asyncio.run(browser.close())
+        asyncio.run(stamper.close())
         print("[勤怠エージェント] 停止しました")
         sys.exit(0)
 

@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import AsyncMock
-from services.attendance_browser import StampResult
+from services.stamper_interface import StampResult
 from graph.nodes.stamp_node import stamp_node
 
 

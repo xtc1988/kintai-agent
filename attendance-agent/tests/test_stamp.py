@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import MagicMock, AsyncMock, patch
-from services.attendance_browser import AttendanceBrowser, StampResult
+from services.attendance_browser import AttendanceBrowser
+from services.stamper_interface import StampResult
 
 
 def test_stamp_result_success():

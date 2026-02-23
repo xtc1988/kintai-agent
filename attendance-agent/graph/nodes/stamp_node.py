@@ -1,8 +1,8 @@
 from graph.state import AttendanceState
-from services.attendance_browser import AttendanceBrowser
+from services.stamper_interface import StamperInterface
 
 
-async def stamp_node(state: AttendanceState, browser: AttendanceBrowser = None) -> dict:
+async def stamp_node(state: AttendanceState, browser: StamperInterface = None) -> dict:
     """Playwrightで打刻を実行するノード"""
     action = state["action_taken"]
 

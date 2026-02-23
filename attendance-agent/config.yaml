@@ -10,6 +10,7 @@ time_rules:
   cutoff_time: "22:00"
 
 browser:
+  stamper: "dummy"    # "dummy" or "playwright"
   headless: true
   retry_count: 3
   session_storage_path: ".session"

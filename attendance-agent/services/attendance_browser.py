@@ -1,18 +1,11 @@
 import asyncio
-from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 from pathlib import Path
 
-
-@dataclass
-class StampResult:
-    success: bool
-    timestamp: str
-    error: Optional[str]
+from services.stamper_interface import StamperInterface, StampResult
 
 
-class AttendanceBrowser:
+class AttendanceBrowser(StamperInterface):
     """Playwrightで社内勤怠システムにアクセスし打刻する"""
 
     def __init__(self, url: str, user: str, password: str, config: dict):
