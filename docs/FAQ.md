@@ -1,6 +1,6 @@
 # よくある質問 (FAQ)
 
-> 最終更新: 2026-02-22
+> 最終更新: 2026-02-23
 
 ---
 
@@ -37,6 +37,16 @@ python main.py
 
 ### Q: 設定を変更するには？
 **A:** `attendance-agent/config.yaml` を編集。チェック間隔、時刻ルール、ブラウザセレクタなどを変更可能。
+
+### Q: 打刻モードを切り替えるには？（DummyStamper / Playwright）
+**A:** `config.yaml` の `browser.stamper` を変更:
+```yaml
+browser:
+  stamper: "dummy"       # ダミー打刻（ログ出力のみ）
+  # stamper: "playwright"  # Playwright実装（本番用）
+```
+- `"dummy"`: DummyStamperが使われ、実際の打刻は行わずログ出力のみ
+- `"playwright"`: AttendanceBrowserが使われ、Playwrightでブラウザ操作して打刻
 
 ### Q: 社内システムのセレクタを設定するには？
 **A:** `config.yaml` の `browser.selectors` セクションを編集:
